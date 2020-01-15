@@ -1,20 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { EventManager, JhiLanguageService } from 'ng-jhipster';
-import { Subscription } from 'rxjs/Subscription';
+import { JhiLanguageService } from 'ng-jhipster';
 
-import { DEBUG_INFO_ENABLED, VERSION } from '../../app.constants';
-import { JhiLanguageHelper, LoginModalService, LoginService, Principal, Project, UserService } from '../../shared';
+import { ProfileService } from '../profiles/profile.service';
+import { JhiLanguageHelper, Principal, LoginModalService, LoginService } from '../../shared';
 
-import { ProfileService } from '../profiles/profile.service'; // FIXME barrel doesn't work here
+import { VERSION, DEBUG_INFO_ENABLED } from '../../app.constants';
 
 @Component({
     selector: 'jhi-navbar',
     templateUrl: './navbar.component.html',
     styleUrls: [
-        'navbar.scss',
-    ],
+        'navbar.scss'
+    ]
 })
 export class NavbarComponent implements OnInit {
 
@@ -24,29 +23,21 @@ export class NavbarComponent implements OnInit {
     swaggerEnabled: boolean;
     modalRef: NgbModalRef;
     version: string;
-    eventSubscriber: Subscription;
-
-    projects: Project[];
-    currentAccount: any;
 
     constructor(
-            private loginService: LoginService,
-            private languageHelper: JhiLanguageHelper,
-            private languageService: JhiLanguageService,
-            private principal: Principal,
-            private loginModalService: LoginModalService,
-            private profileService: ProfileService,
-            private router: Router,
-            private eventManager: EventManager,
-            private userService: UserService,
+        private loginService: LoginService,
+        private languageService: JhiLanguageService,
+        private languageHelper: JhiLanguageHelper,
+        private principal: Principal,
+        private loginModalService: LoginModalService,
+        private profileService: ProfileService,
+        private router: Router
     ) {
-        this.version = DEBUG_INFO_ENABLED ? 'v' + VERSION : '';
+        this.version = VERSION ? 'v' + VERSION : '';
         this.isNavbarCollapsed = true;
-        this.languageService.addLocation('home');
     }
 
     ngOnInit() {
-        this.registerChangeInAuthentication();
         this.languageHelper.getAll().then((languages) => {
             this.languages = languages;
         });
@@ -55,37 +46,10 @@ export class NavbarComponent implements OnInit {
             this.inProduction = profileInfo.inProduction;
             this.swaggerEnabled = profileInfo.swaggerEnabled;
         });
-        this.loadRelevantProjects();
-        this.registerChangeInUsers();
-    }
-
-    registerChangeInAuthentication() {
-        this.eventManager.subscribe('authenticationSuccess', (message) => {
-            this.loadRelevantProjects();
-        });
-    }
-
-    loadRelevantProjects() {
-        this.principal.identity().then((account) => {
-            this.currentAccount = account;
-            if (this.currentAccount) {
-                this.userService.findProject(this.currentAccount.login).subscribe(res => {
-                    this.projects = res.json();
-                });
-            }
-        });
-    }
-
-    registerChangeInUsers() {
-        this.eventSubscriber = this.eventManager.subscribe('userListModification', (response) => this.loadRelevantProjects());
-    }
-
-    trackProjectName(index: number, item: Project) {
-        return item.projectName;
     }
 
     changeLanguage(languageKey: string) {
-        this.languageService.changeLanguage(languageKey);
+      this.languageService.changeLanguage(languageKey);
     }
 
     collapseNavbar() {

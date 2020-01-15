@@ -1,11 +1,10 @@
-import { AfterViewInit, Component, ElementRef, OnInit, Renderer } from '@angular/core';
-import { JhiLanguageService } from 'ng-jhipster';
+import { Component, OnInit, AfterViewInit, Renderer, ElementRef } from '@angular/core';
 
-import { PasswordResetInit } from './password-reset-init.service';
+import { PasswordResetInitService } from './password-reset-init.service';
 
 @Component({
     selector: 'jhi-password-reset-init',
-    templateUrl: './password-reset-init.component.html',
+    templateUrl: './password-reset-init.component.html'
 })
 export class PasswordResetInitComponent implements OnInit, AfterViewInit {
     error: string;
@@ -14,12 +13,10 @@ export class PasswordResetInitComponent implements OnInit, AfterViewInit {
     success: string;
 
     constructor(
-            private jhiLanguageService: JhiLanguageService,
-            private passwordResetInit: PasswordResetInit,
-            private elementRef: ElementRef,
-            private renderer: Renderer,
+        private passwordResetInitService: PasswordResetInitService,
+        private elementRef: ElementRef,
+        private renderer: Renderer
     ) {
-        this.jhiLanguageService.setLocations(['reset']);
     }
 
     ngOnInit() {
@@ -34,11 +31,11 @@ export class PasswordResetInitComponent implements OnInit, AfterViewInit {
         this.error = null;
         this.errorEmailNotExists = null;
 
-        this.passwordResetInit.save(this.resetAccount.email).subscribe(() => {
+        this.passwordResetInitService.save(this.resetAccount.email).subscribe(() => {
             this.success = 'OK';
         }, (response) => {
             this.success = null;
-            if (response.status === 400 ) {
+            if (response.status === 400 && response.data === 'email address not registered') {
                 this.errorEmailNotExists = 'ERROR';
             } else {
                 this.error = 'ERROR';

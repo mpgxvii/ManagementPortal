@@ -7,12 +7,6 @@
             "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
             "entities": {
                 "main": "Entiteiten",
-                "source": "Source",
-                "sourceType": "Source Type",
-                "project": "Project",
-                "oauth-clients": "OAuth Clients",
-                "sourceData": "Source Data",
-                "subject": "Subject",
                 "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
             },
             "account": {
@@ -27,8 +21,6 @@
             "admin": {
                 "main": "Administrator",
                 "userManagement": "User management",
-                "role": "Rol management",
-                "project": "Project management",
                 "tracker": "User tracker",
                 "metrics": "Statistieken",
                 "health": "Status",
@@ -37,7 +29,6 @@
                 "audits": "Audits",
                 "apidocs": "API",
                 "database": "Databank",
-                "revisions": "Revisies",
                 "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
             },
             "language": "Taal"
@@ -93,30 +84,17 @@
         "ribbon": {
             "dev":"Ontwikkeling"
         },
-        "attribute" : {
-            "title" : "Eigenschappen",
-            "key" : "Eigenschap",
-            "value" : "Waarde",
-            "add" : "Toevoegen",
-            "error" : {
-                "alreadyExist" : "Deze eigenschap komt reeds voor in de lijst"
-            }
-
-        }
+        "item-count": "Resultaat {{first}} - {{second}} van {{total}} items."
     },
     "entity": {
         "action": {
-            "addblob": "Blob toevoegen",
-            "addimage": "Afbeelding toevoegen",
             "back": "Terug",
             "cancel": "Annuleren",
             "delete": "Verwijderen",
             "edit": "Wijzigen",
             "open": "Open",
             "save": "Opslaan",
-            "view": "Bekijken",
-            "close": "Sluiten",
-            "refresh": "Verversen"
+            "view": "View"
         },
         "detail": {
             "field": "Veld",
@@ -131,8 +109,6 @@
             "maxlength": "Dit veld kan niet langer zijn dan {{max}} tekens.",
             "min": "Dit veld moet minstens {{min}} zijn.",
             "max": "Dit veld kan niet langer zijn dan {{max}}.",
-            "minbytes": "Dit veld moet minstens {{ min }} bytes zijn.",
-            "maxbytes": "Dit veld kan niet meer dan {{ max }} bytes bevatten.",
             "pattern": "Dit veld zou het patroon moeten volgen {{pattern}}.",
             "number": "Dit veld zou een getal moeten zijn.",
             "datetimelocal": "Dit veld zou een datum en tijd moeten zijn."
@@ -140,20 +116,13 @@
     },
     "error": {
         "internalServerError": "Internal server error",
-        "internalParameterized": "Internal server error: {{ message }}",
         "server.not.reachable": "Server not reachable",
         "url.not.found": "Not found",
         "NotNull": "Field {{fieldName}} cannot be empty!",
         "Size": "Field {{fieldName}} does not meet min/max size requirements!",
         "userexists": "Login name already used!",
         "emailexists": "Email is already in use!",
-        "idexists": "A new {{entityName}} cannot already have an ID",
-        "invalidsubjectstate": "Een stopgezette deelnemer kan niet geactiveerd worden",
-        "nameexists": "Er bestaat reeds een {{ entityName }} met deze naam"
+        "idexists": "A new {{entityName}} cannot already have an ID"
     },
-    "footer": "Dit is uw voettekst",
-    "common" : {
-        "showMore": " Meer",
-        "showLess": " Minder"
-    }
+    "footer": "Dit is uw voettekst"
 }

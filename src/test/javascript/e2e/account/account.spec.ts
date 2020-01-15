@@ -1,22 +1,18 @@
 import { browser, element, by } from 'protractor';
+import { NavBarPage, SignInPage, PasswordPage, SettingsPage } from './../page-objects/jhi-page-objects';
 
 describe('account', () => {
 
-    const username = element(by.id('username'));
-    const password = element(by.id('password'));
-    const accountMenu = element(by.id('account-menu'));
-    const login = element(by.id('login'));
-    const logout = element(by.id('logout'));
-
-    var originalTimeOut;
+    let navBarPage: NavBarPage;
+    let signInPage: SignInPage;
+    let passwordPage: PasswordPage;
+    let settingsPage: SettingsPage;
 
     beforeAll(() => {
-        browser.get('#');
-    });
-
-    beforeEach(() => {
-        originalTimeOut = jasmine.DEFAULT_TIMEOUT_INTERVAL;
-        jasmine.DEFAULT_TIMEOUT_INTERVAL = 240000;
+        browser.get('/');
+        browser.waitForAngular();
+        navBarPage = new NavBarPage(true);
+        browser.waitForAngular();
     });
 
     it('should fail to login with bad password', () => {
@@ -24,12 +20,8 @@ describe('account', () => {
         element.all(by.css('h1')).first().getAttribute('jhiTranslate').then((value) => {
             expect(value).toMatch(expect1);
         });
-        accountMenu.click();
-        login.click();
-
-        username.sendKeys('admin');
-        password.sendKeys('foo');
-        element(by.css('button[type=submit]')).click();
+        signInPage = navBarPage.getSignInPage();
+        signInPage.autoSignInUsing('admin', 'foo');
 
         const expect2 = /login.messages.error.authentication/;
         element.all(by.css('.alert-danger')).first().getAttribute('jhiTranslate').then((value) => {
@@ -38,15 +30,15 @@ describe('account', () => {
     });
 
     it('should login successfully with admin account', () => {
-        const expect1 = /login.title/;
-        element.all(by.css('.modal-content h1')).first().getAttribute('jhiTranslate').then((value) => {
+        const expect1 = /global.form.username/;
+        element.all(by.css('.modal-content label')).first().getAttribute('jhiTranslate').then((value) => {
             expect(value).toMatch(expect1);
         });
-        username.clear();
-        username.sendKeys('admin');
-        password.clear();
-        password.sendKeys('admin');
-        element(by.css('button[type=submit]')).click();
+        signInPage.clearUserName();
+        signInPage.setUserName('admin');
+        signInPage.clearPassword();
+        signInPage.setPassword('admin');
+        signInPage.login();
 
         browser.waitForAngular();
 
@@ -57,14 +49,13 @@ describe('account', () => {
     });
 
     it('should be able to update settings', () => {
-        accountMenu.click();
-        element(by.css('[routerLink="settings"]')).click();
+        settingsPage = navBarPage.getSettingsPage();
 
         const expect1 = /settings.title/;
-        element.all(by.css('h2')).first().getAttribute('jhiTranslate').then((value) => {
+        settingsPage.getTitle().then((value) => {
             expect(value).toMatch(expect1);
         });
-        element(by.css('button[type=submit]')).click();
+        settingsPage.save();
 
         const expect2 = /settings.messages.success/;
         element.all(by.css('.alert-success')).first().getAttribute('jhiTranslate').then((value) => {
@@ -73,49 +64,30 @@ describe('account', () => {
     });
 
     it('should be able to update password', () => {
-        accountMenu.click();
-        element(by.css('[routerLink="password"]')).click();
+        passwordPage = navBarPage.getPasswordPage();
 
-        const expect1 = /password.title/;
-        element.all(by.css('h2')).first().getAttribute('jhiTranslate').then((value) => {
-            expect(value).toMatch(expect1);
-        });
-        password.sendKeys('newpassword');
-        element(by.id('confirmPassword')).sendKeys('newpassword');
-        element(by.css('button[type=submit]')).click();
+        expect(passwordPage.getTitle()).toMatch(/password.title/);
+
+        passwordPage.setPassword('newpassword');
+        passwordPage.setConfirmPassword('newpassword');
+        passwordPage.save();
 
         const expect2 = /password.messages.success/;
         element.all(by.css('.alert-success')).first().getAttribute('jhiTranslate').then((value) => {
             expect(value).toMatch(expect2);
         });
-        accountMenu.click();
-        logout.click();
+        navBarPage.autoSignOut();
+        navBarPage.goToSignInPage();
+        signInPage.autoSignInUsing('admin', 'newpassword');
 
-        accountMenu.click();
-        login.click();
-
-        username.sendKeys('admin');
-        password.sendKeys('newpassword');
-        element(by.css('button[type=submit]')).click();
-
-        browser.waitForAngular();
-
-        accountMenu.click();
-        element(by.css('[routerLink="password"]')).click();
         // change back to default
-        password.clear();
-        password.sendKeys('admin');
-        element(by.id('confirmPassword')).clear();
-        element(by.id('confirmPassword')).sendKeys('admin');
-        element(by.css('button[type=submit]')).click();
-    });
-
-    afterEach(() => {
-        jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeOut;
+        navBarPage.goToPasswordMenu()
+        passwordPage.setPassword('admin');
+        passwordPage.setConfirmPassword('admin');
+        passwordPage.save();
     });
 
     afterAll(() => {
-        accountMenu.click();
-        logout.click();
+        navBarPage.autoSignOut();
     });
 });

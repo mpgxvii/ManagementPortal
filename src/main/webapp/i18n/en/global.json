@@ -7,12 +7,6 @@
             "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
             "entities": {
                 "main": "Entities",
-                "source": "Source",
-                "sourceType": "Source Type",
-                "project": "Projects",
-                "oauth-clients": "OAuth Clients",
-                "sourceData": "Source Data",
-                "subject": "Subject",
                 "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
             },
             "account": {
@@ -27,8 +21,6 @@
             "admin": {
                 "main": "Administration",
                 "userManagement": "User management",
-                "role": "Role Management",
-                "project": "Project Management",
                 "tracker": "User tracker",
                 "metrics": "Metrics",
                 "health": "Health",
@@ -37,7 +29,6 @@
                 "audits": "Audits",
                 "apidocs": "API",
                 "database": "Database",
-                "revisions": "Revisions",
                 "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
             },
             "language": "Language"
@@ -55,8 +46,8 @@
         "messages": {
             "info": {
                 "authenticated": {
-                    "prefix": "Are you a registered user? ",
-                    "link": "Sign in",
+                    "prefix": "If you want to ",
+                    "link": "sign in",
                     "suffix": ", you can try the default accounts:<br/>- Administrator (login=\"admin\" and password=\"admin\") <br/>- User (login=\"user\" and password=\"user\")."
                 },
                 "register": {
@@ -93,16 +84,7 @@
         "ribbon": {
             "dev":"Development"
         },
-        "attribute" : {
-            "title" : "Attributes",
-            "key" : "Attribute Key",
-            "value" : "Attribute Value",
-            "add" : "Add",
-            "error" : {
-                "alreadyExist" : "This attribute key already exist in the list"
-            }
-
-        }
+        "item-count": "Showing {{first}} - {{second}} of {{total}} items."
     },
     "entity": {
         "action": {
@@ -114,9 +96,7 @@
             "edit": "Edit",
             "open": "Open",
             "save": "Save",
-            "view": "View",
-            "close": "Close",
-            "refresh": "Refresh"
+            "view": "View"
         },
         "detail": {
             "field": "Field",
@@ -133,27 +113,20 @@
             "max": "This field cannot be more than {{ max }}.",
             "minbytes": "This field should be at least {{ min }} bytes.",
             "maxbytes": "This field cannot be more than {{ max }} bytes.",
-            "pattern": "This field only allows the following characters: {{ pattern }}.",
+            "pattern": "This field should follow pattern for {{ pattern }}.",
             "number": "This field should be a number.",
             "datetimelocal": "This field should be a date and time."
         }
     },
     "error": {
         "internalServerError": "Internal server error",
-        "internalParameterized": "Internal server error: {{ message }}",
         "server.not.reachable": "Server not reachable",
         "url.not.found": "Not found",
         "NotNull": "Field {{ fieldName }} cannot be empty!",
         "Size": "Field {{ fieldName }} does not meet min/max size requirements!",
         "userexists": "Login name already used!",
         "emailexists": "Email is already in use!",
-        "idexists": "A new {{ entityName }} cannot already have an ID",
-        "invalidsubjectstate": "A discontinued subject can not be activated",
-        "nameexists": "A {{ entityName }} with the given name already exists"
+        "idexists": "A new {{ entityName }} cannot already have an ID"
     },
-    "footer": "For more details, read the user guide <a target=\"_blank\" href=\"https://github.com/RADAR-base/ManagementPortal/wiki/User-Guide\">here.</a>",
-    "common" : {
-        "showMore": " More",
-        "showLess": " Less"
-    }
+    "footer": "This is your footer"
 }

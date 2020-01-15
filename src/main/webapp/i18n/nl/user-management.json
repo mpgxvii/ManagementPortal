@@ -3,12 +3,7 @@
         "home": {
             "title": "Gebruikers",
             "createLabel": "Creëer een nieuwe gebruiker",
-            "createAdminLabel": "Creëer een admin gebruiker",
             "createOrEditLabel": "Creëer of editeer een gebruiker"
-        },
-        "search": {
-            "title": "Zoeken met",
-            "searchLabel": "Zoeken"
         },
         "created": "Een nieuwe gebruiker is aangemaakt met id {{ param }}",
         "updated": "Een gebruiker is geüpdatet met id {{ param }}",
@@ -30,26 +25,6 @@
         "createdBy": "Aangemaakt door",
         "createdDate": "Aanmaak datum",
         "lastModifiedBy": "Laatst aangepast door",
-        "lastModifiedDate": "Laatst aangepast datum",
-        "role" : {
-            "title" : "Rol",
-            "create" : "Toevoegen",
-            "authorityName" : "Authority",
-            "project" : "Project",
-            "error" : {
-                "alreadyExist" : "Deze rol werd al toegevoegd"
-            }
-        },
-        "project": "Project",
-        "sendActivation" : {
-            "title": "Stuur activeringslink",
-            "confirmTitle" : "Bevestig de verzendactiveringslink",
-            "question" : "Weet je zeker dat je activeringslink opnieuw wilt verzenden voor gebruiker {{ login }} naar {{email}} ?",
-            "send" : "Sturen"
-        }
-    },
-    "error": {
-        "rolesRequired": "Er moet minstens &‌eacute;&‌eacute;n rol toegekend worden",
-        "validation": "Validatie fout, controleer de ingevoerde waarden."
+        "lastModifiedDate": "Laatst aangepast datum"
     }
 }

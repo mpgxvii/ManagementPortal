@@ -30,20 +30,14 @@
         <dt><span jhiTranslate="userManagement.profiles">Profiles</span></dt>
         <dd>
             <ul class="list-unstyled">
-                <li *ngFor="let role of user.roles">
-                    <span class="badge badge-info">{{role.authorityName}}</span>
+                <li *ngFor="let authority of user.authorities">
+                    <span class="badge badge-info">{{authority}}</span>
                 </li>
             </ul>
         </dd>
-        <dt><span jhiTranslate="userManagement.project">Project</span></dt>
-        <dd>
-            <div *ngIf="user.project">
-                <a [routerLink]="['/project', user.project?.projectName]">{{user.project?.projectName}}</a>
-            </div>
-        </dd>
     </dl>
     <button type="submit"
-            (click)="previousState()"
+            routerLink="/user-management"
             class="btn btn-info">
         <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
     </button>

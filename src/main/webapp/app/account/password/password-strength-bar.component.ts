@@ -4,8 +4,7 @@ import { Component, ElementRef, Input, Renderer } from '@angular/core';
     selector: 'jhi-password-strength-bar',
     template: `
         <div id="strength">
-            <small jhiTranslate="global.messages.validate.newpassword.strength">Password strength:
-            </small>
+            <small jhiTranslate="global.messages.validate.newpassword.strength">Password strength:</small>
             <ul id="strengthBar">
                 <li class="point"></li>
                 <li class="point"></li>
@@ -15,15 +14,14 @@ import { Component, ElementRef, Input, Renderer } from '@angular/core';
             </ul>
         </div>`,
     styleUrls: [
-        'password-strength-bar.scss',
-    ],
+        'password-strength-bar.scss'
+    ]
 })
 export class PasswordStrengthBarComponent {
 
     colors = ['#F00', '#F90', '#FF0', '#9F0', '#0F0'];
 
-    constructor(private renderer: Renderer, private elementRef: ElementRef) {
-    }
+    constructor(private renderer: Renderer, private elementRef: ElementRef) { }
 
     measureStrength(p: string): number {
 
@@ -35,7 +33,7 @@ export class PasswordStrengthBarComponent {
         const symbols = regex.test(p);
 
         const flags = [lowerLetters, upperLetters, numbers, symbols];
-        const passedMatches = flags.filter((isMatchedFlag: boolean) => {
+        const passedMatches = flags.filter( (isMatchedFlag: boolean) => {
             return isMatchedFlag === true;
         }).length;
 
@@ -51,7 +49,7 @@ export class PasswordStrengthBarComponent {
         force = (passedMatches === 3) ? Math.min(force, 40) : force;
 
         return force;
-    }
+    };
 
     getColor(s: number): any {
         let idx = 0;
@@ -67,15 +65,15 @@ export class PasswordStrengthBarComponent {
             idx = 4;
         }
         return {idx: idx + 1, col: this.colors[idx]};
-    }
+    };
 
     @Input()
     set passwordToCheck(password: string) {
         if (password) {
             const c = this.getColor(this.measureStrength(password));
             const element = this.elementRef.nativeElement;
-            if (element.className) {
-                this.renderer.setElementClass(element, element.className, false);
+            if ( element.className ) {
+                this.renderer.setElementClass(element, element.className , false);
             }
             const lis = element.getElementsByTagName('li');
             for (let i = 0; i < lis.length; i++) {

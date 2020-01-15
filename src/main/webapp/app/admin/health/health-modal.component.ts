@@ -1,26 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { JhiLanguageService } from 'ng-jhipster';
 
 import { JhiHealthService } from './health.service';
 
 @Component({
     selector: 'jhi-health-modal',
-    templateUrl: './health-modal.component.html',
+    templateUrl: './health-modal.component.html'
 })
-export class JhiHealthModalComponent implements OnInit {
+export class JhiHealthModalComponent {
 
     currentHealth: any;
 
-    constructor(
-            private healthService: JhiHealthService,
-            public activeModal: NgbActiveModal,
-            private jhiLanguageService: JhiLanguageService) {
-        this.jhiLanguageService.addLocation('health');
-    }
-
-    ngOnInit() {
-    }
+    constructor(private healthService: JhiHealthService, public activeModal: NgbActiveModal) {}
 
     baseName(name) {
         return this.healthService.getBaseName(name);

@@ -6,16 +6,15 @@ import { errorRoute } from './';
 
 const LAYOUT_ROUTES = [
     navbarRoute,
-    ...errorRoute,
+    ...errorRoute
 ];
 
 @NgModule({
     imports: [
-        RouterModule.forRoot(LAYOUT_ROUTES, {useHash: true}),
+        RouterModule.forRoot(LAYOUT_ROUTES, { useHash: true })
     ],
     exports: [
-        RouterModule,
-    ],
+        RouterModule
+    ]
 })
-export class LayoutRoutingModule {
-}
+export class LayoutRoutingModule {}

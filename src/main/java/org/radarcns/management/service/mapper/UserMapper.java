@@ -1,61 +1,63 @@
 package org.radarcns.management.service.mapper;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.mapstruct.DecoratedWith;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.radarcns.management.domain.Authority;
-import org.radarcns.management.domain.Role;
 import org.radarcns.management.domain.User;
 import org.radarcns.management.service.dto.UserDTO;
-import org.radarcns.management.service.mapper.decorator.UserMapperDecorator;
+
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
- * Mapper for the entity User and its DTO UserDTO.
+ * Mapper for the entity User and its DTO called UserDTO.
+ *
+ * Normal mappers are generated using MapStruct, this one is hand-coded as MapStruct
+ * support is still in beta, and requires a manual step with an IDE.
  */
-@Mapper(componentModel = "spring", uses = {ProjectMapper.class, RoleMapper.class})
-@DecoratedWith(UserMapperDecorator.class)
-public interface UserMapper {
+@Service
+public class UserMapper {
 
-    @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "createdDate", ignore = true)
-    @Mapping(target = "lastModifiedBy", ignore = true)
-    @Mapping(target = "lastModifiedDate", ignore = true)
-    UserDTO userToUserDTO(User user);
-
-    List<UserDTO> usersToUserDTOs(List<User> users);
-
-    @Mapping(target = "activationKey", ignore = true)
-    @Mapping(target = "resetKey", ignore = true)
-    @Mapping(target = "resetDate", ignore = true)
-    @Mapping(target = "password", ignore = true)
-    @Mapping(target = "authorities", ignore = true)
-    User userDTOToUser(UserDTO userDto);
-
-    /**
-     * Map a set of {@link Role}s to a set of strings that are the authorities.
-     * @param roles the roles to map
-     * @return the authorities as a set of strings if roles is not null, null otherwise
-     */
-    default Set<String> rolesToAuthorities(Set<Role> roles) {
-        if (roles == null) {
-            return null;
-        }
-        return roles.stream().map(role -> role.getAuthority().getName())
-                .collect(Collectors.toSet());
+    public UserDTO userToUserDTO(User user) {
+        return new UserDTO(user);
     }
 
-    List<User> userDTOsToUsers(List<UserDTO> userDtos);
+    public List<UserDTO> usersToUserDTOs(List<User> users) {
+        return users.stream()
+            .filter(Objects::nonNull)
+            .map(this::userToUserDTO)
+            .collect(Collectors.toList());
+    }
 
-    /**
-     * Create a {@link User} object with it's id field set to the given id.
-     * @param id the id
-     * @return the user if id is not null, null otherwise.
-     */
-    default User userFromId(Long id) {
+    public User userDTOToUser(UserDTO userDTO) {
+        if (userDTO == null) {
+            return null;
+        } else {
+            User user = new User();
+            user.setId(userDTO.getId());
+            user.setLogin(userDTO.getLogin());
+            user.setFirstName(userDTO.getFirstName());
+            user.setLastName(userDTO.getLastName());
+            user.setEmail(userDTO.getEmail());
+            user.setImageUrl(userDTO.getImageUrl());
+            user.setActivated(userDTO.isActivated());
+            user.setLangKey(userDTO.getLangKey());
+            Set<Authority> authorities = this.authoritiesFromStrings(userDTO.getAuthorities());
+            if(authorities != null) {
+                user.setAuthorities(authorities);
+            }
+            return user;
+        }
+    }
+
+    public List<User> userDTOsToUsers(List<UserDTO> userDTOs) {
+        return userDTOs.stream()
+            .filter(Objects::nonNull)
+            .map(this::userDTOToUser)
+            .collect(Collectors.toList());
+    }
+
+    public User userFromId(Long id) {
         if (id == null) {
             return null;
         }
@@ -64,42 +66,7 @@ public interface UserMapper {
         return user;
     }
 
-    /**
-     * Create a {@link User} object with the login set to the given login.
-     * @param login the login
-     * @return the user login is not null, null otherwise
-     */
-    default User userFromLogin(String login) {
-        if (login == null) {
-            return null;
-        }
-        User user = new User();
-        user.setLogin(login);
-        return user;
-    }
-
-    /**
-     * Map a set of {@link Authority}s to a set of strings that are the authority names.
-     * @param authorities the authorities to map
-     * @return the set of strings if authorities is not null, null otherwise
-     */
-    default Set<String> stringsFromAuthorities(Set<Authority> authorities) {
-        if (authorities == null) {
-            return null;
-        }
-        return authorities.stream().map(Authority::getName)
-                .collect(Collectors.toSet());
-    }
-
-    /**
-     * Map a set of strings to a set of authorities.
-     * @param strings the strings
-     * @return the set of authorities of the set of strings is not null, null otherwise
-     */
-    default Set<Authority> authoritiesFromStrings(Set<String> strings) {
-        if (strings == null) {
-            return null;
-        }
+    public Set<Authority> authoritiesFromStrings(Set<String> strings) {
         return strings.stream().map(string -> {
             Authority auth = new Authority();
             auth.setName(string);

@@ -1,44 +1,45 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { ManagementPortalSharedModule } from '../shared';
 
 import {
-    accountState,
-    Activate,
-    ActivateComponent,
-    Password,
-    PasswordComponent,
-    PasswordResetFinish,
-    PasswordResetFinishComponent,
-    PasswordResetInit,
-    PasswordResetInitComponent,
+    Register,
+    ActivateService,
+    PasswordService,
+    PasswordResetInitService,
+    PasswordResetFinishService,
     PasswordStrengthBarComponent,
+    RegisterComponent,
+    ActivateComponent,
+    PasswordComponent,
+    PasswordResetInitComponent,
+    PasswordResetFinishComponent,
     SettingsComponent,
+    accountState
 } from './';
 
 @NgModule({
     imports: [
         ManagementPortalSharedModule,
-        RouterModule.forRoot(accountState, {useHash: true}),
+        RouterModule.forRoot(accountState, { useHash: true })
     ],
     declarations: [
         ActivateComponent,
-        // RegisterComponent,
+        RegisterComponent,
         PasswordComponent,
         PasswordStrengthBarComponent,
         PasswordResetInitComponent,
         PasswordResetFinishComponent,
-        SettingsComponent,
+        SettingsComponent
     ],
     providers: [
-        // Register,
-        Activate,
-        Password,
-        PasswordResetInit,
-        PasswordResetFinish,
+        Register,
+        ActivateService,
+        PasswordService,
+        PasswordResetInitService,
+        PasswordResetFinishService
     ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class ManagementPortalAccountModule {
-}
+export class ManagementPortalAccountModule {}

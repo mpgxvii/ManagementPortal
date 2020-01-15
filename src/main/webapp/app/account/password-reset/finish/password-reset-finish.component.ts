@@ -1,14 +1,13 @@
-import { AfterViewInit, Component, ElementRef, OnInit, Renderer } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, AfterViewInit, Renderer, ElementRef } from '@angular/core';
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { JhiLanguageService } from 'ng-jhipster';
-import { LoginModalService } from '../../../shared';
+import { ActivatedRoute } from '@angular/router';
 
-import { PasswordResetFinish } from './password-reset-finish.service';
+import { PasswordResetFinishService } from './password-reset-finish.service';
+import { LoginModalService } from '../../../shared';
 
 @Component({
     selector: 'jhi-password-reset-finish',
-    templateUrl: './password-reset-finish.component.html',
+    templateUrl: './password-reset-finish.component.html'
 })
 export class PasswordResetFinishComponent implements OnInit, AfterViewInit {
     confirmPassword: string;
@@ -21,13 +20,11 @@ export class PasswordResetFinishComponent implements OnInit, AfterViewInit {
     key: string;
 
     constructor(
-            private jhiLanguageService: JhiLanguageService,
-            private passwordResetFinish: PasswordResetFinish,
-            private loginModalService: LoginModalService,
-            private route: ActivatedRoute,
-            private elementRef: ElementRef, private renderer: Renderer,
+        private passwordResetFinishService: PasswordResetFinishService,
+        private loginModalService: LoginModalService,
+        private route: ActivatedRoute,
+        private elementRef: ElementRef, private renderer: Renderer
     ) {
-        this.jhiLanguageService.setLocations(['reset']);
     }
 
     ngOnInit() {
@@ -39,8 +36,8 @@ export class PasswordResetFinishComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        if (this.elementRef.nativeElement.querySelector('#password') !== null) {
-            this.renderer.invokeElementMethod(this.elementRef.nativeElement.querySelector('#password'), 'focus', []);
+        if (this.elementRef.nativeElement.querySelector('#password') != null) {
+          this.renderer.invokeElementMethod(this.elementRef.nativeElement.querySelector('#password'), 'focus', []);
         }
     }
 
@@ -50,10 +47,7 @@ export class PasswordResetFinishComponent implements OnInit, AfterViewInit {
         if (this.resetAccount.password !== this.confirmPassword) {
             this.doNotMatch = 'ERROR';
         } else {
-            this.passwordResetFinish.save({
-                key: this.key,
-                newPassword: this.resetAccount.password,
-            }).subscribe(() => {
+            this.passwordResetFinishService.save({key: this.key, newPassword: this.resetAccount.password}).subscribe(() => {
                 this.success = 'OK';
             }, () => {
                 this.success = null;

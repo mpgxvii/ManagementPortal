@@ -1,41 +1,40 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { ManagementPortalSharedModule } from '../shared';
+/* jhipster-needle-add-admin-module-import - JHipster will add admin modules imports here */
 
 import {
     adminState,
     AuditsComponent,
-    AuditsService,
-    JhiConfigurationComponent,
-    JhiConfigurationService,
-    JhiDocsComponent,
-    JhiHealthCheckComponent,
-    JhiHealthModalComponent,
-    JhiHealthService,
-    JhiMetricsMonitoringComponent,
-    JhiMetricsMonitoringModalComponent,
-    JhiMetricsService,
-    LogsComponent,
-    LogsService,
-    UserDeleteDialogComponent,
-    UserDialogComponent,
     UserMgmtComponent,
-    UserMgmtDeleteDialogComponent,
+    UserDialogComponent,
+    UserDeleteDialogComponent,
     UserMgmtDetailComponent,
     UserMgmtDialogComponent,
-    UserModalService,
-    UserResolve,
+    UserMgmtDeleteDialogComponent,
+    LogsComponent,
+    JhiMetricsMonitoringModalComponent,
+    JhiMetricsMonitoringComponent,
+    JhiHealthModalComponent,
+    JhiHealthCheckComponent,
+    JhiConfigurationComponent,
+    JhiDocsComponent,
+    AuditsService,
+    JhiConfigurationService,
+    JhiHealthService,
+    JhiMetricsService,
+    LogsService,
     UserResolvePagingParams,
-    UserSendActivationLinkComponent,
-    UserSendActivationLinkDialogComponent,
+    UserResolve,
+    UserModalService
 } from './';
-import { RoleComponent } from './user-management/role.component';
 
 @NgModule({
     imports: [
         ManagementPortalSharedModule,
-        RouterModule.forRoot(adminState, {useHash: true}),
+        RouterModule.forRoot(adminState, { useHash: true }),
+        /* jhipster-needle-add-admin-module - JHipster will add admin modules here */
     ],
     declarations: [
         AuditsComponent,
@@ -51,15 +50,11 @@ import { RoleComponent } from './user-management/role.component';
         JhiHealthModalComponent,
         JhiDocsComponent,
         JhiMetricsMonitoringComponent,
-        JhiMetricsMonitoringModalComponent,
-        RoleComponent,
-        UserSendActivationLinkComponent,
-        UserSendActivationLinkDialogComponent,
+        JhiMetricsMonitoringModalComponent
     ],
     entryComponents: [
         UserMgmtDialogComponent,
         UserMgmtDeleteDialogComponent,
-        UserSendActivationLinkDialogComponent,
         JhiHealthModalComponent,
         JhiMetricsMonitoringModalComponent,
     ],
@@ -71,9 +66,8 @@ import { RoleComponent } from './user-management/role.component';
         LogsService,
         UserResolvePagingParams,
         UserResolve,
-        UserModalService,
+        UserModalService
     ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class ManagementPortalAdminModule {
-}
+export class ManagementPortalAdminModule {}

@@ -1,45 +1,31 @@
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
 
-import { CookieService } from 'angular2-cookie/services/cookies.service';
 import {
-    AccountService,
-    AuthServerProvider,
-    AuthService,
-    CSRFService,
-    HasAnyAuthorityDirective,
-    JhiLoginModalComponent,
-    LoginModalService,
-    LoginService,
-    ManagementPortalSharedCommonModule,
     ManagementPortalSharedLibsModule,
-    Principal,
-    StateStorageService,
+    ManagementPortalSharedCommonModule,
+    CSRFService,
+    AuthServerProvider,
+    AccountService,
     UserService,
+    StateStorageService,
+    LoginService,
+    LoginModalService,
+    Principal,
+    HasAnyAuthorityDirective,
+    JhiLoginModalComponent
 } from './';
-import { DictionaryMapperComponent } from './dictionary-mapper/dictionary-mapper.component';
-import { ShowMoreComponent } from './show-more/show-more.component';
-import { AuthorityService } from './user/authority.service';
-import { CommonUserMgmtComponent } from './user/common-user-management.component';
-import { ResolvePagingParams } from './commons';
-import { ProjectService } from './project/project.service';
 
 @NgModule({
     imports: [
         ManagementPortalSharedLibsModule,
-        ManagementPortalSharedCommonModule,
-        RouterModule,
+        ManagementPortalSharedCommonModule
     ],
     declarations: [
         JhiLoginModalComponent,
-        HasAnyAuthorityDirective,
-        DictionaryMapperComponent,
-        CommonUserMgmtComponent,
-        ShowMoreComponent,
+        HasAnyAuthorityDirective
     ],
     providers: [
-        CookieService,
         LoginService,
         LoginModalService,
         AccountService,
@@ -47,25 +33,17 @@ import { ProjectService } from './project/project.service';
         Principal,
         CSRFService,
         AuthServerProvider,
-        AuthService,
         UserService,
-        ProjectService,
-        AuthorityService,
-        DatePipe,
-        ResolvePagingParams,
+        DatePipe
     ],
     entryComponents: [JhiLoginModalComponent],
     exports: [
         ManagementPortalSharedCommonModule,
         JhiLoginModalComponent,
         HasAnyAuthorityDirective,
-        DictionaryMapperComponent,
-        CommonUserMgmtComponent,
-        ShowMoreComponent,
-        DatePipe,
+        DatePipe
     ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 
 })
-export class ManagementPortalSharedModule {
-}
+export class ManagementPortalSharedModule {}

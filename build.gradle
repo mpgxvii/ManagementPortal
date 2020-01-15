@@ -1,57 +1,44 @@
+import groovy.json.JsonSlurper
 import org.gradle.internal.os.OperatingSystem
 
-plugins {
-    id 'org.springframework.boot' version '1.5.9.RELEASE'
-    id "com.moowork.node" version "1.2.0"
-    id "io.spring.dependency-management" version "1.0.7.RELEASE"
-    id 'com.jfrog.bintray' version '1.8.4' apply false
-    id 'com.jfrog.artifactory' version '4.9.3' apply false
-}
-
-allprojects {
-    group 'org.radarcns'
-
-    version '0.5.9-SNAPSHOT' // project version
-
-    // The comment on the previous line is only there to identify the project version line easily
-    // with a sed command, to auto-update the version number with the prepare-release-branch.sh
-    // script, do not remove it.
-
-    apply plugin: 'java'
-    apply plugin: 'java-library'
-    apply plugin: 'idea'
-
-    ext.codacyVersion = '4.0.5'
-    ext.githubRepoName = 'RADAR-base/ManagementPortal'
-    ext.githubUrl = 'https://github.com/RADAR-base/ManagementPortal'
-    ext.issueUrl = "https://github.com/$githubRepoName/issues"
-    ext.website = 'http://radar-base.org'
-
-    idea {
-        module {
-            downloadSources = true
-        }
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+        maven { url "http://repo.spring.io/plugins-release" }
+        maven { url "http://repo.spring.io/milestone" }
+        maven { url "https://plugins.gradle.org/m2/" }
     }
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
+    dependencies {
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5"
+        classpath "net.ltgt.gradle:gradle-apt-plugin:0.9"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${spring_boot_version}"
+        classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
+        classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
+        classpath "io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE"
+        //jhipster-needle-gradle-buildscript-dependency - JHipster will add additional gradle build script plugins here
+    }
 }
 
-description = 'MangementPortal application to manage studies and participants'
-
+apply plugin: 'java'
+sourceCompatibility=1.8
+targetCompatibility=1.8
+apply plugin: 'maven'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'war'
+apply plugin: 'propdeps'
 apply plugin: 'com.moowork.node'
 apply plugin: 'io.spring.dependency-management'
-
+apply plugin: 'idea'
 defaultTasks 'bootRun'
 
-configurations {
-    compile.exclude module: "spring-boot-starter-tomcat"
+bootRepackage {
+   mainClass = 'org.radarcns.management.ManagementPortalApp'
 }
 
+war {
 
-bootRepackage {
-    mainClass = 'org.radarcns.management.ManagementPortalApp'
 }
 
 springBoot {
@@ -68,7 +55,7 @@ if (OperatingSystem.current().isWindows()) {
         doFirst {
             manifest {
                 attributes 'Class-Path': configurations.runtime.files.collect {
-                    it.toURI().toURL().toString().replaceFirst(/file:\/+/, '/').replaceAll(' ', '%20')
+                    it.toURL().toString().replaceFirst(/file:\/+/, '/').replaceAll(' ', '%20')
                 }.join(' ')
             }
         }
@@ -87,19 +74,27 @@ if (OperatingSystem.current().isWindows()) {
     }
 }
 
+test {
+    include '**/*UnitTest*'
+    include '**/*IntTest*'
+
+    // uncomment if the tests reports are not generated
+    // see https://github.com/jhipster/generator-jhipster/pull/2771 and https://github.com/jhipster/generator-jhipster/pull/4484
+    // ignoreFailures true
+    reports.html.enabled = false
+}
 
 task testReport(type: TestReport) {
     destinationDir = file("$buildDir/reports/tests")
     reportOn test
 }
 
-
+apply from: 'gradle/sonar.gradle'
 apply from: 'gradle/liquibase.gradle'
 apply from: 'gradle/gatling.gradle'
 apply from: 'gradle/mapstruct.gradle'
 apply from: 'gradle/docker.gradle'
-apply from: 'gradle/style.gradle'
-apply from: 'gradle/openapi.gradle'
+//jhipster-needle-gradle-apply-from - JHipster will add additional gradle scripts to be applied here
 
 if (project.hasProperty('prod')) {
     apply from: 'gradle/profile_prod.gradle'
@@ -111,49 +106,61 @@ if (project.hasProperty('graphite')) {
     apply from: 'gradle/graphite.gradle'
 }
 
-//ext.moduleDescription = 'Management Portal application'
-ext.findbugAnnotationVersion = '3.0.2'
+if (project.hasProperty('prometheus')) {
+    apply from: 'gradle/prometheus.gradle'
+}
+
+group = 'org.radarcns.management'
+version = '0.0.1-SNAPSHOT'
+
+description = ''
+
+configurations {
+    providedRuntime
+    compile.exclude module: "spring-boot-starter-tomcat"
+}
 
 repositories {
+    mavenLocal()
     mavenCentral()
     jcenter()
-    maven { url 'https://oss.jfrog.org/artifactory/libs-snapshot/' }
-    maven { url 'https://dl.bintray.com/radar-cns/org.radarcns' }
+    maven { url 'http://repo.spring.io/milestone' }
+    maven { url 'http://repo.spring.io/snapshot' }
+    maven { url 'https://repository.jboss.org/nexus/content/repositories/releases' }
+    maven { url 'https://oss.sonatype.org/content/repositories/releases' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url 'http://repo.maven.apache.org/maven2' }
 }
 
 dependencies {
     compile "io.github.jhipster:jhipster:${jhipster_server_version}"
     compile "io.dropwizard.metrics:metrics-core:${dropwizard_metrics_version}"
-    compile "io.dropwizard.metrics:metrics-jcache:${dropwizard_metrics_version}"
     compile "io.dropwizard.metrics:metrics-jvm:${dropwizard_metrics_version}"
     compile "io.dropwizard.metrics:metrics-servlet:${dropwizard_metrics_version}"
     compile "io.dropwizard.metrics:metrics-json:${dropwizard_metrics_version}"
     compile "io.dropwizard.metrics:metrics-servlets:${dropwizard_metrics_version}"
-    compile("net.logstash.logback:logstash-logback-encoder:${logstash_logback_encoder_version}") {
-        exclude(group: 'ch.qos.logback')
-    }
-    compile "com.fasterxml.jackson.datatype:jackson-datatype-json-org:${jackson_dataformat_version}"
-    compile "com.fasterxml.jackson.datatype:jackson-datatype-hppc:${jackson_dataformat_version}"
-    compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jackson_dataformat_version}"
-    compile "com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:${jackson_dataformat_version}"
-    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:${jackson_dataformat_version}"
-    compile "com.fasterxml.jackson.core:jackson-annotations:${jackson_dataformat_version}"
-    compile "com.fasterxml.jackson.core:jackson-databind:${jackson_version}"
-    compile("com.ryantenney.metrics:metrics-spring:${metrics_spring_version}")
+    compile "net.logstash.logback:logstash-logback-encoder:${logstash_logback_encoder_version}"
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-json-org"
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-hppc"
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-hibernate5"
+    compile "com.fasterxml.jackson.core:jackson-annotations"
+    compile "com.fasterxml.jackson.core:jackson-databind"
+    compile "com.fasterxml.jackson.module:jackson-module-afterburner"
+    compile ("com.ryantenney.metrics:metrics-spring:${metrics_spring_version}")
     compile "com.hazelcast:hazelcast"
     compile "com.hazelcast:hazelcast-hibernate52:${hazelcast_hibernate52_version}"
     compile "com.hazelcast:hazelcast-spring"
     compile "javax.cache:cache-api"
     compile "org.hibernate:hibernate-core:${hibernate_version}"
-    compile("com.zaxxer:HikariCP:${hikaricp_version}")
+    compile ("com.zaxxer:HikariCP:${hikaricp_version}")
     compile "org.apache.commons:commons-lang3:${commons_lang_version}"
     compile "commons-io:commons-io:${commons_io_version}"
     compile "javax.transaction:javax.transaction-api"
-    compile group: 'javax.ws.rs', name: 'jsr311-api', version: '1.1.1'
-    compile group: 'com.google.code.findbugs', name: 'jsr305', version: findbugAnnotationVersion
     compile "org.hibernate:hibernate-envers:${hibernate_version}"
     compile "org.hibernate:hibernate-validator"
-    compile("org.liquibase:liquibase-core")
+    compile "org.hibernate:hibernate-entitymanager:${hibernate_version}"
+    compile ("org.liquibase:liquibase-core")
     compile "com.mattbertolini:liquibase-slf4j:${liquibase_slf4j_version}"
     compile "org.springframework.boot:spring-boot-actuator"
     compile "org.springframework.boot:spring-boot-autoconfigure"
@@ -161,36 +168,31 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-mail"
     compile "org.springframework.boot:spring-boot-starter-logging"
     compile "org.springframework.boot:spring-boot-starter-aop"
-    compile ("org.springframework.boot:spring-boot-starter-data-jpa") {
-        exclude group: 'org.hibernate', module: 'hibernate-entitymanager'
-    }
+    compile "org.springframework.boot:spring-boot-starter-data-jpa"
     compile "org.springframework.boot:spring-boot-starter-security"
-    compile "org.springframework.cloud:spring-cloud-starter-zuul:${zuul_proxy_version}"
-    compile("org.springframework.boot:spring-boot-starter-web") {
+    compile ("org.springframework.boot:spring-boot-starter-web") {
         exclude module: 'spring-boot-starter-tomcat'
     }
     compile "org.springframework.boot:spring-boot-starter-undertow"
     compile "org.springframework.boot:spring-boot-starter-thymeleaf"
-    compile("org.springframework:spring-context-support")
+    compile "org.springframework.boot:spring-boot-starter-cloud-connectors"
+    compile ("org.springframework:spring-context-support")
     compile "org.springframework.security:spring-security-config"
     compile "org.springframework.security:spring-security-data"
-    compile ("org.springframework.security:spring-security-web"){
-        exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
-    }
-    compile "org.springframework.security:spring-security-jwt"
+    compile "org.springframework.security:spring-security-web"
     compile "org.springframework.security.oauth:spring-security-oauth2:${spring_security_oauth2_version}"
-    compile("io.springfox:springfox-swagger2:${springfox_version}") {
+    compile ("io.springfox:springfox-swagger2:${springfox_version}") {
         exclude module: 'mapstruct'
     }
     compile "io.springfox:springfox-bean-validators:${springfox_version}"
     compile "org.postgresql:postgresql"
     compile "com.h2database:h2"
-    compile project(path: ':radar-auth', configuration: 'shadow')
-    compile "org.springframework.data:spring-data-envers:${spring_data_envers_version}"
-
+    compile "org.mapstruct:mapstruct-jdk8:${mapstruct_version}"
     testCompile "org.awaitility:awaitility:${awaitility_version}"
     testCompile "com.jayway.jsonpath:json-path"
-    testCompile "org.springframework.boot:spring-boot-starter-test"
+    testCompile ("org.springframework.boot:spring-boot-starter-test") {
+        exclude group: 'com.vaadin.external.google', module: 'android-json'
+    }
     testCompile "org.springframework.security:spring-security-test"
     testCompile "org.springframework.boot:spring-boot-test"
     testCompile "org.assertj:assertj-core:${assertj_version}"
@@ -198,7 +200,11 @@ dependencies {
     testCompile "org.mockito:mockito-core"
     testCompile "com.mattbertolini:liquibase-slf4j:${liquibase_slf4j_version}"
     testCompile "org.hamcrest:hamcrest-library"
-    annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
+    testCompile "io.gatling.highcharts:gatling-charts-highcharts:${gatling_version}"
+    optional ("org.springframework.boot:spring-boot-configuration-processor:${spring_boot_version}") {
+        exclude group: 'com.vaadin.external.google', module: 'android-json'
+    }
+    //jhipster-needle-gradle-dependency - JHipster will add additional dependencies here
 }
 
 clean {
@@ -209,8 +215,8 @@ task cleanResources(type: Delete) {
     delete 'build/resources'
 }
 
-wrapper {
-    gradleVersion '5.4.1'
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.0'
 }
 
 task stage(dependsOn: 'bootRepackage') {
@@ -226,13 +232,5 @@ if (project.hasProperty('nodeInstall')) {
 }
 
 compileJava.dependsOn processResources
-processResources.dependsOn cleanResources, bootBuildInfo
+processResources.dependsOn cleanResources,bootBuildInfo
 bootBuildInfo.mustRunAfter cleanResources
-
-task downloadDependencies {
-    description "Pre-downloads dependencies"
-    configurations.compileClasspath.files
-    configurations.runtimeClasspath.files
-}
-
-apply from: 'gradle/publishing.gradle'

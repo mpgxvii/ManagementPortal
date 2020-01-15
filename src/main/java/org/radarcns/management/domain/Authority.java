@@ -1,25 +1,20 @@
 package org.radarcns.management.domain;
 
-import java.io.Serializable;
-import java.util.Objects;
-import javax.persistence.Column;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.envers.Audited;
-import org.radarcns.auth.config.Constants;
+import java.io.Serializable;
 
 /**
  * An authority (a security role) used by Spring Security.
  */
 @Entity
-@Audited
-@Table(name = "radar_authority")
+@Table(name = "jhi_authority")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Authority implements Serializable {
 
@@ -28,16 +23,8 @@ public class Authority implements Serializable {
     @NotNull
     @Size(min = 0, max = 50)
     @Id
-    @Pattern(regexp = Constants.ENTITY_ID_REGEX)
     @Column(length = 50)
     private String name;
-
-    public Authority() {
-    }
-
-    public Authority(String authorityName) {
-        this.name = authorityName;
-    }
 
     public String getName() {
         return name;
@@ -58,11 +45,7 @@ public class Authority implements Serializable {
 
         Authority authority = (Authority) o;
 
-        if (name == null || authority.name == null) {
-            return false;
-        }
-
-        return Objects.equals(name, authority.name);
+        return !(name != null ? !name.equals(authority.name) : authority.name != null);
     }
 
     @Override
@@ -72,8 +55,8 @@ public class Authority implements Serializable {
 
     @Override
     public String toString() {
-        return "Authority{"
-                + "name='" + name + '\''
-                + "}";
+        return "Authority{" +
+            "name='" + name + '\'' +
+            "}";
     }
 }

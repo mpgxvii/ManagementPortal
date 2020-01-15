@@ -1,57 +1,42 @@
 package org.radarcns.management.domain;
 
+import org.radarcns.management.config.Constants;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
-import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Email;
-import org.radarcns.auth.config.Constants;
-import org.radarcns.management.domain.support.AbstractEntityListener;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.time.Instant;
 
 /**
  * A user.
  */
 @Entity
-@Audited
-@Table(name = "radar_user")
+@Table(name = "jhi_user")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-@EntityListeners({AbstractEntityListener.class})
-public class User extends AbstractEntity implements Serializable {
+public class User extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
-    @SequenceGenerator(name = "sequenceGenerator", initialValue = 1000)
+    @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
     @NotNull
-    @Pattern(regexp = Constants.ENTITY_ID_REGEX)
+    @Pattern(regexp = Constants.LOGIN_REGEX)
     @Size(min = 1, max = 50)
     @Column(length = 50, unique = true, nullable = false)
     private String login;
@@ -59,7 +44,7 @@ public class User extends AbstractEntity implements Serializable {
     @JsonIgnore
     @NotNull
     @Size(min = 60, max = 60)
-    @Column(name = "password_hash", length = 60)
+    @Column(name = "password_hash",length = 60)
     private String password;
 
     @Size(max = 50)
@@ -72,7 +57,7 @@ public class User extends AbstractEntity implements Serializable {
 
     @Email
     @Size(min = 5, max = 100)
-    @Column(length = 100, unique = true, nullable = true)
+    @Column(length = 100, unique = true)
     private String email;
 
     @NotNull
@@ -83,6 +68,10 @@ public class User extends AbstractEntity implements Serializable {
     @Column(name = "lang_key", length = 5)
     private String langKey;
 
+    @Size(max = 256)
+    @Column(name = "image_url", length = 256)
+    private String imageUrl;
+
     @Size(max = 20)
     @Column(name = "activation_key", length = 20)
     @JsonIgnore
@@ -90,20 +79,21 @@ public class User extends AbstractEntity implements Serializable {
 
     @Size(max = 20)
     @Column(name = "reset_key", length = 20)
+    @JsonIgnore
     private String resetKey;
 
     @Column(name = "reset_date")
-    private ZonedDateTime resetDate = null;
+    private Instant resetDate = null;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
+    @ManyToMany
     @JoinTable(
-            name = "role_users",
-            joinColumns = {@JoinColumn(name = "users_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "roles_id", referencedColumnName = "id")})
+        name = "jhi_user_authority",
+        joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+        inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "name")})
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @BatchSize(size = 20)
-    @Cascade(CascadeType.SAVE_UPDATE)
-    private Set<Role> roles = new HashSet<>();
+    private Set<Authority> authorities = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -119,7 +109,7 @@ public class User extends AbstractEntity implements Serializable {
 
     //Lowercase the login before saving it in database
     public void setLogin(String login) {
-        this.login = login.toLowerCase(Locale.ENGLISH);
+        this.login = StringUtils.lowerCase(login, Locale.ENGLISH);
     }
 
     public String getPassword() {
@@ -154,6 +144,14 @@ public class User extends AbstractEntity implements Serializable {
         this.email = email;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     public boolean getActivated() {
         return activated;
     }
@@ -178,14 +176,13 @@ public class User extends AbstractEntity implements Serializable {
         this.resetKey = resetKey;
     }
 
-    public ZonedDateTime getResetDate() {
-        return resetDate;
+    public Instant getResetDate() {
+       return resetDate;
     }
 
-    public void setResetDate(ZonedDateTime resetDate) {
-        this.resetDate = resetDate;
+    public void setResetDate(Instant resetDate) {
+       this.resetDate = resetDate;
     }
-
     public String getLangKey() {
         return langKey;
     }
@@ -194,17 +191,12 @@ public class User extends AbstractEntity implements Serializable {
         this.langKey = langKey;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
     public Set<Authority> getAuthorities() {
-        return roles.stream()
-                .map(Role::getAuthority).collect(Collectors.toSet());
+        return authorities;
+    }
+
+    public void setAuthorities(Set<Authority> authorities) {
+        this.authorities = authorities;
     }
 
     @Override
@@ -217,25 +209,25 @@ public class User extends AbstractEntity implements Serializable {
         }
 
         User user = (User) o;
-
-        return login.equals(user.login);
+        return !(user.getId() == null || getId() == null) && Objects.equals(getId(), user.getId());
     }
 
     @Override
     public int hashCode() {
-        return login.hashCode();
+        return Objects.hashCode(getId());
     }
 
     @Override
     public String toString() {
-        return "User{"
-                + "login='" + login + '\''
-                + ", firstName='" + firstName + '\''
-                + ", lastName='" + lastName + '\''
-                + ", email='" + email + '\''
-                + ", activated='" + activated + '\''
-                + ", langKey='" + langKey + '\''
-                + ", activationKey='" + activationKey + '\''
-                + "}";
+        return "User{" +
+            "login='" + login + '\'' +
+            ", firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
+            ", email='" + email + '\'' +
+            ", imageUrl='" + imageUrl + '\'' +
+            ", activated='" + activated + '\'' +
+            ", langKey='" + langKey + '\'' +
+            ", activationKey='" + activationKey + '\'' +
+            "}";
     }
 }

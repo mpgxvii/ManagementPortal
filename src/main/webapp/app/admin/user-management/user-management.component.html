@@ -1,44 +1,21 @@
 <div>
     <h2>
         <span jhiTranslate="userManagement.home.title">Users</span>
-        <button *jhiHasAnyAuthority="['ROLE_SYS_ADMIN']" class="btn btn-primary float-right" style="margin-left: 5px" [routerLink]="['/', { outlets: { popup: ['user-management-new-admin'] } }]">
-            <span class="fa fa-plus"></span> <span jhiTranslate="userManagement.home.createAdminLabel">Create an admin User</span>
-        </button>
-        <button class="btn btn-primary float-right" [routerLink]="['/', { outlets: { popup: ['user-management-new'] } }]">
+        <button class="btn btn-primary float-right jh-create-entity" [routerLink]="['/', { outlets: { popup: ['user-management-new'] } }]">
             <span class="fa fa-plus"></span> <span jhiTranslate="userManagement.home.createLabel">Create a new User</span>
         </button>
     </h2>
     <jhi-alert></jhi-alert>
-    <div>
-        <h4 jhiTranslate="userManagement.search.title">Filter by</h4>
-        <p class="d-flex">
-            <span jhiTranslate="userManagement.login" class="input-group-addon">Login</span>
-            <input type="text" class="form-control" name="byLogin" [(ngModel)]="byLogin" (ngModelChange)="onChange($event)"/>
-
-            <span jhiTranslate="userManagement.email" class="input-group-addon">Email</span>
-            <input type="text" class="form-control" name="byEmail" [(ngModel)]="byEmail" (ngModelChange)="onChange($event)"/>
-
-            <span jhiTranslate="userManagement.role.project"
-                  class="input-group-addon">Project</span>
-            <input type="text" class="form-control" name="byProject" [(ngModel)]="byProject" (ngModelChange)="onChange($event)"/>
-
-            <span jhiTranslate="userManagement.role.authorityName"
-                  class="input-group-addon">Role</span>
-            <input type="text" class="form-control" name="byAuthority" [(ngModel)]="byAuthority" (ngModelChange)="onChange($event)"/>
-        </p>
-    </div>
-
     <div class="table-responsive" *ngIf="users">
         <table class="table table-striped">
             <thead>
             <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
-            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span><span class="fa fa-sort"></span></th>
+                <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <span class="fa fa-sort"></span></th>
                 <th jhiSortBy="login"><span jhiTranslate="userManagement.login">Login</span> <span class="fa fa-sort"></span></th>
                 <th jhiSortBy="email"><span jhiTranslate="userManagement.email">Email</span> <span class="fa fa-sort"></span></th>
                 <th></th>
                 <th jhiSortBy="langKey"> <span jhiTranslate="userManagement.langKey">Lang Key</span> <span class="fa fa-sort"></span></th>
-                <th jhiSortBy="roles.authorityName"><span jhiTranslate="userManagement.role.authorityName">Profiles</span><span class="fa fa-sort"></span></th>
-                <th jhiSortBy="lastModifiedDate"><span jhiTranslate="userManagement.role.project">Project</span> <span class="fa fa-sort"></span></th>
+                <th><span jhiTranslate="userManagement.profiles">Profiles</span></th>
                 <th jhiSortBy="createdDate"><span jhiTranslate="userManagement.createdDate">Created Date</span> <span class="fa fa-sort"></span></th>
                 <th jhiSortBy="lastModifiedBy"><span jhiTranslate="userManagement.lastModifiedBy">Last Modified By</span> <span class="fa fa-sort"></span></th>
                 <th jhiSortBy="lastModifiedDate"><span jhiTranslate="userManagement.lastModifiedDate">Last Modified Date</span> <span class="fa fa-sort"></span></th>
@@ -51,27 +28,20 @@
                 <td>{{user.login}}</td>
                 <td>{{user.email}}</td>
                 <td>
-                    <span class="badge badge-danger "  *ngIf="!user.activated"
-                          jhiTranslate="userManagement.deactivated">Deactivated</span>
-                    <span class="badge badge-success "  *ngIf="user.activated"
-                          jhiTranslate="userManagement.activated">Activated</span>
+                    <button class="btn btn-danger btn-sm" (click)="setActive(user, true)" *ngIf="!user.activated"
+                            jhiTranslate="userManagement.deactivated">Deactivated</button>
+                    <button class="btn btn-success btn-sm" (click)="setActive(user, false)" *ngIf="user.activated"
+                            [disabled]="currentAccount.login === user.login" jhiTranslate="userManagement.activated">Activated</button>
                 </td>
                 <td>{{user.langKey}}</td>
                 <td>
-                    <div *ngFor="let role of user.roles">
-                        <span *ngIf="role.authorityName === 'ROLE_SYS_ADMIN'">{{role.authorityName}}</span>
-                        <a *ngIf="role.authorityName != 'ROLE_SYS_ADMIN'" [routerLink]="['/role', role.projectName, role.authorityName ]" >{{role.authorityName}}</a>
-                    </div>
-                </td>
-                <td>
-                    <div *ngFor="let role of user.roles">
-                       {{role.projectName}}
+                    <div *ngFor="let authority of user.authorities">
+                        <span class="badge badge-info">{{ authority }}</span>
                     </div>
                 </td>
                 <td>{{user.createdDate | date:'dd/MM/yy HH:mm'}}</td>
                 <td>{{user.lastModifiedBy}}</td>
                 <td>{{user.lastModifiedDate | date:'dd/MM/yy HH:mm'}}</td>
-
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
                         <button type="submit"
@@ -80,27 +50,17 @@
                             <span class="fa fa-eye"></span>
                             <span class="hidden-md-down" jhiTranslate="entity.action.view">View</span>
                         </button>
-                        <button type="submit" [replaceUrl]="true"
-                                [routerLink]="['/', { outlets: { popup: 'user-management/'+ user.login + '/send-activation'} }]"
-                                [disabled]="user.activated"
-                                class="btn btn-warning btn-sm">
-                            <span class="fa fa-mail-forward"></span>
-                            <span class="hidden-md-down" jhiTranslate="userManagement.sendActivation.title">Send activation link</span>
-                        </button>
-                        <button [disabled]="user.roles[0].authorityName=='ROLE_SYS_ADMIN'" type="submit"
+                        <button type="submit"
                                 [routerLink]="['/', { outlets: { popup: 'user-management/'+ user.login + '/edit'} }]"
-                                [replaceUrl]="true"
+                                replaceUrl="true"
                                 class="btn btn-primary btn-sm">
                             <span class="fa fa-pencil"></span>
                             <span class="hidden-md-down" jhiTranslate="entity.action.edit">Edit</span>
                         </button>
                         <button type="submit"
                                 [routerLink]="['/', { outlets: { popup: 'user-management/'+ user.login + '/delete'} }]"
-                                [replaceUrl]="true"
-                                class="btn btn-danger btn-sm"
-                                [disabled]="currentAccount.login==user.login ||
-                                user.roles[0].authorityName=='ROLE_PARTICIPANT' ||
-                                user.roles[0].authorityName=='ROLE_INACTIVE_PARTICIPANT'">
+                                replaceUrl="true"
+                                class="btn btn-danger btn-sm" [disabled]="currentAccount.login === user.login">
                             <span class="fa fa-remove"></span>
                             <span class="hidden-md-down" jhiTranslate="entity.action.delete">Delete</span>
                         </button>
@@ -115,7 +75,7 @@
             <jhi-item-count [page]="page" [total]="queryCount" [itemsPerPage]="itemsPerPage"></jhi-item-count>
         </div>
         <div class="row justify-content-center">
-            <ngb-pagination [collectionSize]="totalItems" [(pageSize)]="itemsPerPage" [(page)]="page" (pageChange)="loadPage(page)"></ngb-pagination>
+            <ngb-pagination [collectionSize]="totalItems" [(page)]="page" (pageChange)="loadPage(page)"></ngb-pagination>
         </div>
     </div>
 </div>

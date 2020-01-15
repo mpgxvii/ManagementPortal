@@ -1,45 +1,36 @@
-import { NgModule, Sanitizer } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { AlertService } from 'ng-jhipster';
-import { TranslateService } from 'ng2-translate';
+
 import {
+    ManagementPortalSharedLibsModule,
+    JhiLanguageHelper,
     FindLanguageFromKeyPipe,
     JhiAlertComponent,
-    JhiAlertErrorComponent,
-    JhiLanguageHelper,
-    ManagementPortalSharedLibsModule,
+    JhiAlertErrorComponent
 } from './';
-
-export function alertServiceProvider(sanitizer: Sanitizer, translateService: TranslateService) {
-    // set below to true to make alerts look like toast
-    const isToast = false;
-    return new AlertService(sanitizer, isToast, translateService);
-}
 
 @NgModule({
     imports: [
-        ManagementPortalSharedLibsModule,
+        ManagementPortalSharedLibsModule
     ],
     declarations: [
         FindLanguageFromKeyPipe,
         JhiAlertComponent,
-        JhiAlertErrorComponent,
+        JhiAlertErrorComponent
     ],
     providers: [
         JhiLanguageHelper,
-        {
-            provide: AlertService,
-            useFactory: alertServiceProvider,
-            deps: [Sanitizer, TranslateService],
-        },
         Title,
+        {
+            provide: LOCALE_ID,
+            useValue: 'en'
+        },
     ],
     exports: [
         ManagementPortalSharedLibsModule,
         FindLanguageFromKeyPipe,
         JhiAlertComponent,
-        JhiAlertErrorComponent,
-    ],
+        JhiAlertErrorComponent
+    ]
 })
-export class ManagementPortalSharedCommonModule {
-}
+export class ManagementPortalSharedCommonModule {}

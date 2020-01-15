@@ -1,62 +1,51 @@
-import { Injectable } from '@angular/core';
-import { Headers, Http, Response } from '@angular/http';
-import { CookieService } from 'angular2-cookie/core';
+import { Injectable, Inject } from '@angular/core';
+import { Http, Response, Headers } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
-import { AUTH_TOKEN_COOKIE } from '../constants/common.constants';
+import { LocalStorageService } from 'ng2-webstorage';
+
+import { JhiBase64Service } from 'ng-jhipster';
 
 @Injectable()
 export class AuthServerProvider {
 
     constructor(
-            private http: Http,
-            private cookieService: CookieService,
-    ) {
-    }
+        private http: Http,
+        private base64: JhiBase64Service,
+        private $localStorage: LocalStorageService
+    ) {}
 
     getToken() {
-        return this.cookieService.getObject(AUTH_TOKEN_COOKIE);
+        return this.$localStorage.retrieve('authenticationToken');
     }
 
     login(credentials): Observable<any> {
-        const params = 'username=' + encodeURIComponent(credentials.username) + '&password=' +
-                encodeURIComponent(credentials.password) + '&grant_type=password';
-        const headers = new Headers({
+        const data = 'username=' +  encodeURIComponent(credentials.username) + '&password=' +
+            encodeURIComponent(credentials.password) + '&grant_type=password&scope=read%20write&' +
+            'client_secret=my-secret-token-to-change-in-production&client_id=ManagementPortalapp';
+        const headers = new Headers ({
             'Content-Type': 'application/x-www-form-urlencoded',
             'Accept': 'application/json',
+            'Authorization': 'Basic ' + this.base64.encode('ManagementPortalapp' + ':' + 'my-secret-token-to-change-in-production')
         });
 
-        return this.http.post('oauthserver/oauth/token', params, {headers})
-                .map((response) => {
-                    const data = response.json();
-                    const expiredAt = new Date();
-                    expiredAt.setSeconds(expiredAt.getSeconds() + data.expires_in);
-                    data.expires_at = expiredAt.getTime();
-                    this.cookieService.remove(AUTH_TOKEN_COOKIE);
-                    this.cookieService.putObject(AUTH_TOKEN_COOKIE, data);
-                    return data;
-                });
-    }
+        return this.http.post('oauth/token', data, {
+            headers
+        }).map(authSuccess.bind(this));
 
-    sendRefreshTokenRequest(): Observable<Response> {
-        const headers = new Headers({
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Accept': 'application/json',
-        });
-        const params = 'grant_type=refresh_token';
-        return this.http.post('oauthserver/oauth/token', params, {headers});
+        function authSuccess(resp) {
+            const response = resp.json();
+            const expiredAt = new Date();
+            expiredAt.setSeconds(expiredAt.getSeconds() + response.expires_in);
+            response.expires_at = expiredAt.getTime();
+            this.$localStorage.store('authenticationToken', response);
+            return response;
+        }
     }
 
     logout(): Observable<any> {
-        return new Observable(observer => {
+        return new Observable((observer) => {
             this.http.post('api/logout', {});
-            // revoke rft token
-            const headers = new Headers({
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Accept': 'application/json',
-            });
-            // remove other cookies
-            this.http.delete('oauthserver/oauth/token', {headers});
-            this.cookieService.removeAll();
+            this.$localStorage.clear('authenticationToken');
             observer.complete();
         });
     }

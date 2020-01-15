@@ -1,7 +1,7 @@
 {
     "home": {
-        "title": "Welcome to RADAR Management Portal",
-        "subtitle": "Manage your patient monitoring studies here!",
+        "title": "Welcome, Java Hipster!",
+        "subtitle": "This is your homepage",
         "logged": {
             "message": "You are logged in as user \"{{username}}\"."
         },

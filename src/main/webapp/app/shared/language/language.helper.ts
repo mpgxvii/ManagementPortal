@@ -1,18 +1,21 @@
-import { Injectable } from '@angular/core';
+import { Injectable, RendererFactory2, Renderer2 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRouteSnapshot, Router } from '@angular/router';
-import {
-    LangChangeEvent,
-    TranslateService,
-    TranslationChangeEvent,
-} from 'ng2-translate/ng2-translate';
+import { Router, ActivatedRouteSnapshot } from '@angular/router';
+import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
 
 import { LANGUAGES } from './language.constants';
 
 @Injectable()
 export class JhiLanguageHelper {
+    renderer: Renderer2 = null;
 
-    constructor(private translateService: TranslateService, private titleService: Title, private router: Router) {
+    constructor(
+        private translateService: TranslateService,
+        private rootRenderer: RendererFactory2,
+        private titleService: Title,
+        private router: Router
+    ) {
+        this.renderer = rootRenderer.createRenderer(document.querySelector('html'), null);
         this.init();
     }
 
@@ -29,7 +32,7 @@ export class JhiLanguageHelper {
      */
     updateTitle(titleKey?: string) {
         if (!titleKey) {
-            titleKey = this.getPageTitle(this.router.routerState.snapshot.root);
+             titleKey = this.getPageTitle(this.router.routerState.snapshot.root);
         }
 
         this.translateService.get(titleKey).subscribe((title) => {
@@ -38,11 +41,8 @@ export class JhiLanguageHelper {
     }
 
     private init() {
-        this.translateService.onTranslationChange.subscribe((event: TranslationChangeEvent) => {
-            this.updateTitle();
-        });
-
         this.translateService.onLangChange.subscribe((event: LangChangeEvent) => {
+            this.renderer.setAttribute(document.querySelector('html'), 'lang', this.translateService.currentLang);
             this.updateTitle();
         });
     }

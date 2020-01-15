@@ -1,34 +1,23 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title th:text="#{email.creation.title}">JHipster creation</title>
+        <title th:text="#{email.activation.title}">JHipster creation</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="shortcut icon" href="${baseUrl}/favicon.ico" />
     </head>
     <body>
-        <p th:text="#{email.creation.greeting} + ' ' + ${#strings.capitalize(user.login)}">
+        <p th:text="#{email.activation.greeting(${user.login})}">
             Dear
         </p>
         <p th:text="#{email.creation.text1}">
-            Your JHipster account has been created by RADAR-base team.
-        </p>
-        <p th:text="#{email.creation.loginIntro(${user.login})}">
-            Your user name is
-        </p>
-
-        <p th:text="#{email.creation.text2}">
-            Please click on this link below to activate your account by resetting your password.
+            Your JHipster account has been created, please click on the URL below to access it:
         </p>
         <p>
-            <a th:href="@{|${baseUrl}/#/reset/finish?key=${user.resetKey}|}"
-               th:text="|${user.login}|">login</a>
-        </p>
-        <p th:text="#{email.creation.expiry(${expiry})}">
-        </p>
-
-        <p th:text="#{email.creation.onetimeonly}">
+          <a th:href="@{|${baseUrl}/#/reset/finish?key=${user.resetKey}|}"
+             th:text="@{|${baseUrl}/#/reset/finish?key=${user.resetKey}|}">Login link</a>
         </p>
         <p>
-            <span th:text="#{email.creation.regards}">Regards, </span>
+            <span th:text="#{email.activation.text2}">Regards, </span>
             <br/>
             <em th:text="#{email.signature}">JHipster.</em>
         </p>

@@ -1,10 +1,15 @@
 apply plugin: 'org.springframework.boot'
 apply plugin: 'com.moowork.node'
 
-ext.logbackLoglevel = 'INFO'
+ext {
+    logbackLoglevel = "INFO"
+}
+
+dependencies {
+
+}
 
 def profiles = 'prod'
-
 if (project.hasProperty('no-liquibase')) {
     profiles += ',no-liquibase'
 }
@@ -15,6 +20,11 @@ if (project.hasProperty('swagger')) {
 
 bootRun {
     args = []
+}
+
+
+task webpack_test(type: YarnTask, dependsOn: 'yarn_install') {
+    args = ["run", "webpack:test"]
 }
 
 task webpack(type: YarnTask, dependsOn: 'yarn_install') {
@@ -33,12 +43,13 @@ processResources {
     }
     filesMatching('**/application.yml') {
         filter {
-            it.replace('#spring.profiles.active#', profiles)
+            it.replace('#project.version#', version)
         }
         filter {
-            it.replace('#project.version#', version.toString())
+            it.replace('#spring.profiles.active#', profiles)
         }
     }
 }
 
+test.dependsOn webpack_test
 processResources.dependsOn webpack

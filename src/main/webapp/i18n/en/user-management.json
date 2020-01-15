@@ -3,12 +3,7 @@
         "home": {
             "title": "Users",
             "createLabel": "Create a new user",
-            "createAdminLabel": "Create an admin user",
             "createOrEditLabel": "Create or edit a user"
-        },
-        "search": {
-            "title": "Filter by",
-            "searchLabel": "Search"
         },
         "created": "A new user is created with identifier {{ param }}",
         "updated": "An user is updated with identifier {{ param }}",
@@ -25,31 +20,11 @@
         "email": "Email",
         "activated": "Activated",
         "deactivated": "Deactivated",
-        "profiles": "Authorities",
+        "profiles": "Profiles",
         "langKey": "Language",
         "createdBy": "Created by",
         "createdDate": "Created date",
         "lastModifiedBy": "Modified by",
-        "lastModifiedDate": "Modified date",
-        "role" : {
-            "title" : "Role",
-            "create" : "Add",
-            "authorityName" : "Authority",
-            "project" : "Project",
-            "error" : {
-                "alreadyExist" : "This role has been already added"
-            }
-        },
-        "project" : "Project",
-        "sendActivation" : {
-            "title": "Send activation link",
-            "confirmTitle" : "Confirm sending activation link",
-            "question" : "Are you sure you want to resend activation link for user {{ login }} to {{ email }}?",
-            "send" : "Send"
-        }
-    },
-    "error": {
-        "rolesRequired": "One or more roles are required",
-        "validation": "Validation error, check the entered values in the fields."
+        "lastModifiedDate": "Modified date"
     }
 }

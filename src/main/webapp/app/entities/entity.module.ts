@@ -1,32 +1,14 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { ManagementPortalOAuthClientModule } from './oauth-client/oauth-client.module';
-import { ManagementPortalProjectModule } from './project/project.module';
-import { ManagementPortalRevisionModule } from './revision/revision.module';
-import { ManagementPortalRoleModule } from './role/role.module';
-import { ManagementPortalSourceDataModule } from './source-data/source-data.module';
-
-import { ManagementPortalSourceTypeModule } from './source-type/source-type.module';
-import { ManagementPortalSourceModule } from './source/general-source.module';
-import { ManagementPortalSubjectModule } from './subject/general.subject.module';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 /* jhipster-needle-add-entity-module-import - JHipster will add entity modules imports here */
 
 @NgModule({
     imports: [
-        ManagementPortalSourceModule,
-        ManagementPortalSourceTypeModule,
-        ManagementPortalProjectModule,
-        ManagementPortalSourceDataModule,
-        ManagementPortalRoleModule,
-        ManagementPortalSubjectModule,
-        ManagementPortalOAuthClientModule,
-        ManagementPortalRevisionModule,
         /* jhipster-needle-add-entity-module - JHipster will add entity modules here */
     ],
     declarations: [],
     entryComponents: [],
     providers: [],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class ManagementPortalEntityModule {
-}
+export class ManagementPortalEntityModule {}

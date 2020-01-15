@@ -41,6 +41,12 @@ Navbar
     }
 }
 
+@media screen and (min-width: 768px) { 
+    .jh-navbar-toggler {
+        display: none;
+    }
+}
+
 @media screen and (max-width: 992px) {
     .jh-logo-container {
         width: 100%;
@@ -50,6 +56,11 @@ Navbar
 .navbar-title {
     display: inline-block;
     vertical-align: middle;
+    color: #fff;
+}
+
+.nav-link {
+    color: #fff;
 }
 
 /* ==========================================================================
@@ -63,7 +74,7 @@ Logo styles
             width: 70px;
             display: inline-block;
             vertical-align: middle;
-            background: url("../../../content/images/radar-base-icon-1.png") no-repeat center center;
+            background: url("../../../content/images/logo-jhipster.png") no-repeat center center;
             background-size: contain;
         }
     }

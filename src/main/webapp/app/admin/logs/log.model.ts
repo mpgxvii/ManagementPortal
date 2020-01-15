@@ -1,7 +1,6 @@
 export class Log {
     constructor(
-            public name: string,
-            public level: string,
-    ) {
-    }
+        public name: string,
+        public level: string
+    ) { }
 }

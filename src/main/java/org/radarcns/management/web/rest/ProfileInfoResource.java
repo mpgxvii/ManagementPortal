@@ -1,15 +1,15 @@
 package org.radarcns.management.web.rest;
 
+import org.radarcns.management.config.DefaultProfileUtil;
+
 import io.github.jhipster.config.JHipsterProperties;
+
+import org.springframework.core.env.Environment;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.radarcns.management.config.DefaultProfileUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Resource to return information about the currently running Spring profiles.
@@ -18,11 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class ProfileInfoResource {
 
-    @Autowired
-    private Environment env;
+    private final Environment env;
 
-    @Autowired
-    private JHipsterProperties jHipsterProperties;
+    private final JHipsterProperties jHipsterProperties;
+
+    public ProfileInfoResource(Environment env, JHipsterProperties jHipsterProperties) {
+        this.env = env;
+        this.jHipsterProperties = jHipsterProperties;
+    }
 
     @GetMapping("/profile-info")
     public ProfileInfoVM getActiveProfiles() {
@@ -31,8 +34,7 @@ public class ProfileInfoResource {
     }
 
     private String getRibbonEnv(String[] activeProfiles) {
-        String[] displayOnActiveProfiles = jHipsterProperties.getRibbon()
-                .getDisplayOnActiveProfiles();
+        String[] displayOnActiveProfiles = jHipsterProperties.getRibbon().getDisplayOnActiveProfiles();
         if (displayOnActiveProfiles == null) {
             return null;
         }
@@ -47,9 +49,9 @@ public class ProfileInfoResource {
 
     class ProfileInfoVM {
 
-        private final String[] activeProfiles;
+        private String[] activeProfiles;
 
-        private final String ribbonEnv;
+        private String ribbonEnv;
 
         ProfileInfoVM(String[] activeProfiles, String ribbonEnv) {
             this.activeProfiles = activeProfiles;

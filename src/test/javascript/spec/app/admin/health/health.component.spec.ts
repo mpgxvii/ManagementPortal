@@ -23,8 +23,7 @@ describe('Component Tests', () => {
                         useValue: null
                     }
                 ]
-            })
-            .overrideTemplate(JhiHealthCheckComponent, '')
+            }).overrideTemplate(JhiHealthCheckComponent, '')
             .compileComponents();
         }));
 
@@ -47,7 +46,7 @@ describe('Component Tests', () => {
                 expect(comp.subSystemName('subsystem')).toBe('');
             });
 
-            it('should return the subsystem when it has multiple options', () => {
+            it('should return the subsystem when it has multiple keys', () => {
                 expect(comp.subSystemName('subsystem.subsystem.system')).toBe(' - subsystem.system');
             });
         });
