@@ -1,8 +1,8 @@
-dist: trusty
+dist: xenial
 services:
   - docker
 addons:
-  firefox: latest
+  chrome: stable
   apt:
     packages:
       - docker-ce # necessary for testing the Dockerfile, which is a multi-stage build see: https://github.com/travis-ci/travis-ci/issues/8181

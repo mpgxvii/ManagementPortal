@@ -13,9 +13,9 @@ exports.config = {
     ],
 
     capabilities: {
-        'browserName': 'firefox',
-        'moz:firefoxOptions': {
-            'args': ['--headless']
+        'browserName': 'chrome',
+        'chromeOptions': {
+            'args': ['--headless', "--disable-gpu", "--window-size=1280x1024"]
         },
         'phantomjs.binary.path': require('phantomjs-prebuilt').path,
         'phantomjs.ghostdriver.cli.args': ['--loglevel=DEBUG'],
